@@ -19,7 +19,7 @@ const routes: Routes = [
     {
         path: 'passengers',
         canActivate: [GuardService], //route protegée
-        component: PassengersComponent, // à changer contre UsersComponent
+        component: PassengersComponent, // à changer contre  PassengersComponent
     },
     {
         path: '**',
