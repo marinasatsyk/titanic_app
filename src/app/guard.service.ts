@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from "@angular/router";
-import { UserService } from './user.service';
+import { UsersService } from './users.service';
 
 
 @Injectable({
@@ -9,7 +9,7 @@ import { UserService } from './user.service';
 export class GuardService   implements CanActivate  {
 //  private canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree;
   constructor(
-    private uS: UserService,
+    private uS: UsersService,
     private router: Router
   ) { }
 

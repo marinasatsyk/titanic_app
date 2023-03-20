@@ -11,7 +11,7 @@ const httpOptions = {
   providedIn: 'root'
 })
 
-export class UserService {
+export class UsersService {
   private apiUsersUrs = 'http://localhost:8000/users';
 
   constructor(
