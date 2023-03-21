@@ -3,36 +3,35 @@ import { CommonModule } from '@angular/common';
 import { GuardService } from '../guard.service';
 import { PassengersComponent } from './passengers.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import {Routes, RouterModule } from "@angular/router";
+import { Routes, RouterModule } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { HeaderComponent } from './header/header.component';
+import { SearchComponent } from './search/search.component';
+import { BarchartComponent } from './barchart/barchart.component';
+import { NgChartsModule } from 'ng2-charts';
 
 const passengersRoutes: Routes = [
-  {
-  path: 'passengers',
-  canActivate: [GuardService], //route protegée
-  component: PassengersComponent
-  },
-  // {
-  //   path:'pokemon/:id',
-  //   canActivate: [GuardService], //route protegée
-  //   component: PokemonDetailComponent
-  // },
+    {
+        path: 'passengers',
+        canActivate: [GuardService], //route protegée
+        component: PassengersComponent
+    },
+    // {
+    //   path:'pokemon/:id',
+    //   canActivate: [GuardService], //route protegée
+    //   component: PokemonDetailComponent
+    // },
 ];
 
-
-
-
 @NgModule({
-  declarations: [
-    PassengersComponent
-  ],
-  imports: [
-    CommonModule,
-    RouterModule.forRoot(passengersRoutes),
-    FormsModule,
-    ReactiveFormsModule,
-    BrowserModule
-  ]
+    declarations: [PassengersComponent, HeaderComponent, SearchComponent, BarchartComponent],
+    imports: [
+        CommonModule,
+        RouterModule.forRoot(passengersRoutes),
+        FormsModule,
+        ReactiveFormsModule,
+        BrowserModule,
+        NgChartsModule,
+    ],
 })
-export class PassengersModule { }
+export class PassengersModule {}

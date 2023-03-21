@@ -1,0 +1,45 @@
+<div class="d-flex justify-content-center align-items-center form-wrap">
+    <form
+        [formGroup]="form"
+        (ngSubmit)="submitForm()"
+        novalidate
+        class="d-flex flex-md-column justify-content-center align-items-center"
+    >
+        <!-- <div class='header'> -->
+        <!-- <h1>Show the stitistic by</h1> -->
+        <!-- <button type="button" class="close" aria-label="Close" (click)='onToggleCreateForm()'>
+            <span aria-hidden="true">&times;</span>
+          </button> -->
+        <!-- </div> -->
+        <!-- <div class="form-floating mb-3" *ngFor="let itemPokemon of itemsPokemon">
+                <input type="text" class="form-control" id={{itemPokemon}}   name={{itemPokemon}} formControlName={{itemPokemon}} >
+                 <label for={{itemPokemon}}>{{itemPokemon}}</label>
+        </div> -->
+        <h4>Show the statiscitcs by</h4>
+        <div
+            class="typeArea d-flex flex-row mb-3 justify-content-between align-items-center flex-wrap"
+        >
+            <div
+                class="form-check"
+                *ngFor="let field of selectFields; let i = index"
+            >
+                <input
+                    class="form-check-input"
+                    type="checkbox"
+                    [value]="field.value"
+                    (change)="onCheckboxChange($event)"
+                />
+                <label class="form-check-label" for="flexCheckChecked">
+                    {{ field.name }}
+                </label>
+            </div>
+        </div>
+        <p
+            class="error"
+            *ngIf="this.form.controls['checkArrayTypes'].errors?.['required']"
+        >
+            Choose at list one!
+        </p>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
