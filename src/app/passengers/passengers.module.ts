@@ -9,6 +9,7 @@ import { HeaderComponent } from './header/header.component';
 import { SearchComponent } from './search/search.component';
 import { BarchartComponent } from './barchart/barchart.component';
 import { NgChartsModule } from 'ng2-charts';
+import { PiechartComponent } from './piechart/piechart.component';
 
 const passengersRoutes: Routes = [
     {
@@ -24,7 +25,7 @@ const passengersRoutes: Routes = [
 ];
 
 @NgModule({
-    declarations: [PassengersComponent, HeaderComponent, SearchComponent, BarchartComponent],
+    declarations: [PassengersComponent, HeaderComponent, SearchComponent, BarchartComponent, PiechartComponent],
     imports: [
         CommonModule,
         RouterModule.forRoot(passengersRoutes),

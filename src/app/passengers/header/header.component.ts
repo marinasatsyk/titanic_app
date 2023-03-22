@@ -12,11 +12,17 @@ export class HeaderComponent {
     @Output() serchPassengers: EventEmitter<string> = new EventEmitter();
 
     search: string = '';
+    // isCriteriaFilter: any;
 
     constructor(
         private route: ActivatedRoute,
         private PassengersService: PassengersService
-    ) {}
+    ) {
+        // this.isCriteriaFilter = PassengersService.criteriaFilterChange.subscribe((value) => {
+        //     this.isCriteriaFilter = value;
+        //   })
+       
+    }
 
     onSubmitSearch(form: NgForm) {
         console.log('form.value.search', form.value.search);

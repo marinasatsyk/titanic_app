@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, Input } from '@angular/core';
 import { ChartConfiguration, ChartData, ChartEvent, ChartType, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import DataLabelsPlugin from 'chartjs-plugin-datalabels';
@@ -10,6 +10,10 @@ import DataLabelsPlugin from 'chartjs-plugin-datalabels';
 })
 export class BarchartComponent {
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
+
+  @Input() labels: string[];
+  @Input() dataset: number[];
+  @Input() label: string;
 
   public barChartOptions: ChartConfiguration['options'] = {
     responsive: true,
@@ -43,13 +47,7 @@ export class BarchartComponent {
       { data: [ 28, 48, 40, 19, 86, 27, 90 ], label: 'Series B' }
     ]
   };
-  // public barChartLegend = true;
-  // public barChartPlugins = [];
-
-  // public barChartData: ChartDataSetsBar[] = [
-  //   { data: [65, 59, 80, 81, 56, 55, 40], label: 'Series A' },
-  //   { data: [28, 48, 40, 19, 86, 27, 90], label: 'Series B' }
-  // ];
+  
   public chartClicked({ event, active }: { event?: ChartEvent, active?: {}[] }): void {
     console.log(event, active);
   }

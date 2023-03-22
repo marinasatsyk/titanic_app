@@ -28,6 +28,7 @@ export class SearchComponent {
 
     form: any = FormGroup;
     submitted: boolean = false;
+    CriteriaFilterSearch: any;
 
     constructor(
         private fb: FormBuilder,
@@ -42,6 +43,9 @@ export class SearchComponent {
             passengersService.isModalOpenServiceChange.subscribe((value) => {
                 this.isModalOpen = value;
             });
+        this.CriteriaFilterSearch = passengersService.criteriaFilterChange.subscribe((value) => {
+            this.CriteriaFilterSearch = value;
+        })
     }
 
     onCheckboxChange(e: any) {
@@ -63,19 +67,27 @@ export class SearchComponent {
         console.log(this.form);
     }
 
-    submitForm() {
-        console.log(this.form.value);
-        //virer id ne new pokemon
-        let selectCriteria = this.form.value.checkArrayTypes;
-        console.log(selectCriteria);
-    }
+    
 
     ngOnInit() {
         this.isModalOpen = this.passengersService.isModalOpenService;
+        this.CriteriaFilterSearch = this.passengersService.criteriaFilterChange;
     }
 
     onToggleCreateForm() {
         this.passengersService.onToggleCreateForm();
         console.log('click modal from FORM close', this.isModalOpen);
+    }
+    submitForm() {
+        // console.log(this.form.value);
+        let selectCriteria = this.form.value.checkArrayTypes;
+        console.log(selectCriteria);
+        this.passengersService.filterPassegerByCriteria(selectCriteria);
+        console.log("criteriaFilterChange from Serach component", this.CriteriaFilterSearch);
+    }
+
+    clearFilters(){
+        this.passengersService.filterPassegerByCriteria([]);
+        console.log("CriteriaFilterSearch from clear", this.CriteriaFilterSearch);
     }
 }

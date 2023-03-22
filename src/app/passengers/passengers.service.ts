@@ -16,21 +16,24 @@ const httpOptions = {
 export class PassengersService {
     private passengers: Passenger[] = [];
     public sendCurrentPage = new Subject<number>();
-    isModalOpenService: boolean;
-    isModalOpenServiceChange: Subject<boolean> = new Subject<boolean>();
+     isModalOpenService: boolean;
+     criteriaFilter: any[];
+     isModalOpenServiceChange: Subject<boolean> = new Subject<boolean>();
+    public criteriaFilterChange: Subject<string[]> = new Subject<string[]>();
 
     constructor(private http: HttpClient) {
         this.isModalOpenService = false;
+        this.criteriaFilter = [];
     }
 
     private server = {
         mongo: 8000,
-        local: 3000,
+        local: 3000, //for js server
     };
 
     getPassengers(): Observable<Passenger[]> {
         return this.http
-            .get<Passenger[]>(`http://localhost:${this.server.mongo}/passengers`)
+            .get<Passenger[]>(`http://localhost:${this.server.mongo}/passengers`) //how to change an variable of environement local-product?
             .pipe(
                 tap((passengersList) => console.log('from service', passengersList)),
                 catchError((error) => {
@@ -73,5 +76,11 @@ export class PassengersService {
     onToggleCreateForm(): void {
         this.isModalOpenService = !this.isModalOpenService;
         this.isModalOpenServiceChange.next(this.isModalOpenService);
+    }
+
+    filterPassegerByCriteria(criteria: string[]): void {
+        this.criteriaFilterChange.next(criteria);
+        console.log('from service',  this.criteriaFilterChange);
+        
     }
 }

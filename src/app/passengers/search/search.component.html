@@ -16,6 +16,7 @@
                  <label for={{itemPokemon}}>{{itemPokemon}}</label>
         </div> -->
         <h4>Show the statiscitcs by</h4>
+
         <div
             class="typeArea d-flex flex-row mb-3 justify-content-between align-items-center flex-wrap"
         >
@@ -42,4 +43,12 @@
         </p>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
+    <div
+        type="button"
+        class="clear"
+        aria-label="Clear"
+        (click)="clearFilters()"
+    >
+        x
+    </div>
 </div>
