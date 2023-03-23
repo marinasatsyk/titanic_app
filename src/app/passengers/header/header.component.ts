@@ -9,7 +9,7 @@ import { PassengersService } from '../passengers.service';
     styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent {
-    @Output() serchPassengers: EventEmitter<string> = new EventEmitter();
+    @Output() serchPassengers: EventEmitter<String[]> = new EventEmitter();
 
     search: string = '';
     // isCriteriaFilter: any;
@@ -28,9 +28,9 @@ export class HeaderComponent {
         console.log('form.value.search', form.value.search);
     }
 
-    onSearchPassengers($event: string) {
-        console.log('*header* onSearchPassengers', $event);
+    onSearchPassengers($event: String[]) {
         this.serchPassengers.emit($event);
+        console.log('❤️❤️❤️***header*** onSearchPassengers', $event);
     }
 
     onToggleCreateForm() {

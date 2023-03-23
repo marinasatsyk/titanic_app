@@ -1,21 +1,31 @@
-<headerComponent />
+<headerComponent  (serchPassengers)="filterCriteria($event)"/>
 <div class="container text-center">
     <div class="row">
       <div class="col">
-        <barchartComponent [dataset] = "totalDataChart" [labels] = "totalLables" [label]="statiticsTitles.total" />
+        <barchartComponent 
+        [data1] = "totalDataChart[0]" 
+        [data2] = "totalDataChart[1]"
+        [data3] = "totalDataChart[2]"
+        [labels] = "totalGlobalLables" 
+        [label1]="totalLabels[0]" 
+        [label2]="totalLabels[1]" 
+        [label3]="totalLabels[2]" 
+        />
       </div>
-      <div class="col">
-        <!-- <barchartComponent /> -->
+      
+      <div *ngIf="isClassCriteria" class="col">
+        <barchartComponent 
+        [data1] = "classDataChart[0]"  
+        [data2] = "classDataChart[1]" 
+        [data3] = "classDataChart[2]" 
+        [labels] = "classGlobalLables" 
+        [label1]="classLables[0]"
+        [label2]="classLables[1]"
+        [label3]="classLables[2]"
+        />
       </div>
     </div>
-    <!-- <div class="row">
-      <div class="col">
-        <barchartComponent />
-      </div>
-      <div class="col">
-        <barchartComponent />
-      </div> -->
-    <!-- </div> -->
+    <div class="row"></div>
 </div>
 <!-- <div class="passCard" *ngFor="let passenger of passengersTotal">
     {{ passenger.Name }}

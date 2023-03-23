@@ -16,11 +16,14 @@ const httpOptions = {
 export class PassengersService {
     private passengers: Passenger[] = [];
     public sendCurrentPage = new Subject<number>();
-     isModalOpenService: boolean;
-     criteriaFilter: any[];
-     isModalOpenServiceChange: Subject<boolean> = new Subject<boolean>();
+    public isModalOpenService: boolean;
+    public isModalOpenServiceChange: Subject<boolean> = new Subject<boolean>();
+
+    public criteriaFilter: any[];
     public criteriaFilterChange: Subject<string[]> = new Subject<string[]>();
 
+
+    
     constructor(private http: HttpClient) {
         this.isModalOpenService = false;
         this.criteriaFilter = [];
@@ -78,9 +81,9 @@ export class PassengersService {
         this.isModalOpenServiceChange.next(this.isModalOpenService);
     }
 
-    filterPassegerByCriteria(criteria: string[]): void {
-        this.criteriaFilterChange.next(criteria);
-        console.log('from service',  this.criteriaFilterChange);
+    // filterPassegerByCriteria(criteria: string[]): any {
+    //     this.criteriaFilterChange.next(criteria);
+    //     console.log('✅from service',  this.criteriaFilterChange);
         
-    }
+    // }
 }

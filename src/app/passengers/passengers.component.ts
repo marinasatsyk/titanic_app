@@ -9,33 +9,26 @@ import { count } from 'rxjs';
     styleUrls: ['./passengers.component.scss'],
 })
 export class PassengersComponent implements OnInit {
+    @Output() serchPassengers: EventEmitter<String[]> = new EventEmitter();
+
     passengersTotal: Passenger[] = [];
 
     isModalOpen: boolean;
     _modalSubscription: any;
-    isCriteriaFilter: any;
-    // datasets: [
-    //   { data: [ 65, 59, 80, 81, 56, 55, 40 ], label: 'Series A' },
-    //   { data: [ 28, 48, 40, 19, 86, 27, 90 ], label: 'Series B' }
-    // ]
 
-    totalDataChart: any[] =
-        // totalOnBoard: number,
-        // totalNotSurvived: number,
-        // totalF: number,
-        // totalH: number,
-        // totalAgeTo20: number,
-        // totalAgeFrom21To40: number,
-        // totalAgeFrom41To60: number,
-        // totalAgeFrom61To80: number,
-        // totalAgeFrom81To100: number,
-        // total1Class: number,
-        // total2Class: number,
-        // total3Class: number,
-        [];
-    totalLables: string[] = [
-        'Total  on board',
-        'Total victims',
+    /**filters */
+    crteriaFilter: any;
+    isAgeCriteria: boolean = false;
+    isSexCriteria: boolean = false;
+    isClassCriteria: boolean = false;
+
+    /**Total data */
+    totalDataChart: any[] = [];
+    classDataChart: any[] = [];
+    sexDataChart: any[] = [];
+    ageDataChart: any[] = [];
+    totalGlobalLables: string[] = [
+        'Total on board',
         'Total age up to 20 years old',
         'Total from 21 to 40 years old',
         'Total from 41 to 60 years old',
@@ -44,13 +37,39 @@ export class PassengersComponent implements OnInit {
         'Total 1 Class',
         'Total 2 Class',
         'Total 3 Class',
+        'Total Women',
+        'Total Men'
     ];
 
+    totalLabels: string[] = [
+        'Total',
+        'Victims',
+        'Survived'
+    ];
+    classGlobalLables: string[] = [
+        'Total on board',
+        'Total victims',
+        'Total age up to 20 years old',
+        'Total from 21 to 40 years old',
+        'Total from 41 to 60 years old',
+        'Total from 61 to 80 years old',
+        'Total from 81 to 100 years old',
+        'Total F',
+        'Total H',
+    ];
+    
+    classLables: string[] = [
+        '1 Class',
+        '2 Class',
+        '3 Class',
+    ]
+
     statiticsTitles = {
-      total: "Total Statistics",
-      age: "Age Statistics",
-      sex: "Sex Statistics"
-    }
+        total: 'Total Statistics',
+        age: 'Age Statistics',
+        sex: 'Sex Statistics',
+        classS: 'Class Statistics'
+    };
 
     constructor(private passengerService: PassengersService) {
         this.isModalOpen = passengerService.isModalOpenService;
@@ -58,26 +77,21 @@ export class PassengersComponent implements OnInit {
             passengerService.isModalOpenServiceChange.subscribe((value) => {
                 this.isModalOpen = value;
             });
-        this.isCriteriaFilter = passengerService.criteriaFilterChange.subscribe(
-            (value) => {
-                this.isCriteriaFilter = value;
-            }
-        );
+        // this.cirteriaFilter = passengerService.criteriaFilterChange.subscribe(
+        //     (value) => {
+        //         this.cirteriaFilter = value;
+        //     }
+        // );
     }
 
     ngOnInit(): void {
-        //rajouter filter
         this.passengerService
             .getPassengers()
             .subscribe((passengerslist: any) => {
                 this.passengersTotal = passengerslist.passengers;
-                // console.log('😊from ngOnInit ', this.passengersTotal);
-                // this.totalDataSet();
-                // const totalFilter = this.filterTotal();
 
-                this.totalDataChart = [
+                this.totalDataChart[0] = [
                     ...[this.filterTotal()],
-                    ...[this.filterTotal('0')],
                     ...[this.filterTotalAge({ from: 0, to: 20 })],
                     ...[this.filterTotalAge({ from: 21, to: 40 })],
                     ...[this.filterTotalAge({ from: 41, to: 60 })],
@@ -86,10 +100,40 @@ export class PassengersComponent implements OnInit {
                     ...[this.filterTotalClass(1)],
                     ...[this.filterTotalClass(2)],
                     ...[this.filterTotalClass(3)],
+                    ...[this.filterTotalSex('female')],
+                    ...[this.filterTotalSex('male')],
+                ];
+                this.totalDataChart[1] = [
+                    ...[this.filterTotal('0')],
+                    ...[this.filterTotalAge({ from: 0, to: 20 }, '0')],
+                    ...[this.filterTotalAge({ from: 21, to: 40 }, '0')],
+                    ...[this.filterTotalAge({ from: 41, to: 60 }, '0')],
+                    ...[this.filterTotalAge({ from: 61, to: 80 }, '0')],
+                    ...[this.filterTotalAge({ from: 81, to: 100 }, '0')],
+                    ...[this.filterTotalClass(1, '0')],
+                    ...[this.filterTotalClass(2, '0')],
+                    ...[this.filterTotalClass(3, '0')],
+                    ...[this.filterTotalSex('female', '0')],
+                    ...[this.filterTotalSex('male', '0')],
+                ];
+                this.totalDataChart[2] = [
+                    ...[this.filterTotal(1)],
+                    ...[this.filterTotalAge({ from: 0, to: 20 }, 1)],
+                    ...[this.filterTotalAge({ from: 21, to: 40 }, 1)],
+                    ...[this.filterTotalAge({ from: 41, to: 60 }, 1)],
+                    ...[this.filterTotalAge({ from: 61, to: 80 }, 1)],
+                    ...[this.filterTotalAge({ from: 81, to: 100 }, 1)],
+                    ...[this.filterTotalClass(1, 1)],
+                    ...[this.filterTotalClass(2, 1)],
+                    ...[this.filterTotalClass(3, 1)],
+                    ...[this.filterTotalSex('female', 1)],
+                    ...[this.filterTotalSex('male', 1)],
+
                 ];
                 console.log('🔎', this.totalDataChart);
             });
-        this.isModalOpen = this.passengerService.isModalOpenService;
+
+         console.log('✅✅✅✅✅✅***passengersComponent***', this.crteriaFilter);
     }
 
     filterTotal(isSurvived?: number | string) {
@@ -103,47 +147,131 @@ export class PassengersComponent implements OnInit {
         } else {
             count = this.passengersTotal.length;
         }
-        console.log(
-            isSurvived
-                ? `survived=${isSurvived} total ${count}`
-                : `total ${count}`
-        );
+        // console.log(
+        //     isSurvived
+        //         ? `survived=${isSurvived} total ${count}`
+        //         : `total ${count}`
+        // );
         return count;
     }
 
     filterTotalAge(
         scope: { from: number; to: number },
-        isSurvived?: number | string
+        isSurvived?: number | string,
+        classNum?: number,
+        sex?: string
     ): number {
         let count = 0;
         if (isSurvived) {
+            if (!classNum && !sex) {
+                this.passengersTotal.map((passenger) => {
+                    if (
+                        passenger.Age >= scope.from &&
+                        passenger.Age <= scope.to &&
+                        passenger.Survived == isSurvived
+                    ) {
+                        count++;
+                    }
+                });
+                console.log('passengers num', count);
+                
+            } else if (classNum && !sex) {
+                this.passengersTotal.map((passenger) => {
+                    if (
+                        passenger.Age >= scope.from &&
+                        passenger.Age <= scope.to &&
+                        passenger.Survived == isSurvived &&
+                        passenger.Pclass == classNum
+                    ) {
+                        count++;
+                    }
+                });
+            } else if (classNum && sex) {
+                this.passengersTotal.map((passenger) => {
+                    if (
+                        passenger.Age >= scope.from &&
+                        passenger.Age <= scope.to &&
+                        passenger.Survived == isSurvived &&
+                        passenger.Pclass == classNum &&
+                        passenger.Sex == sex
+                    ) {
+                        count++;
+                    }
+                });
+            } else if (!classNum && sex) {
+                this.passengersTotal.map((passenger) => {
+                    if (
+                        passenger.Age >= scope.from &&
+                        passenger.Age <= scope.to &&
+                        passenger.Survived == isSurvived &&
+                        passenger.Sex == sex
+                    ) {
+                        count++;
+                    }
+                });
+            }
+        } else {
+             if (classNum && !sex) {
+                this.passengersTotal.map((passenger) => {
+                    if (
+                        passenger.Age >= scope.from &&
+                        passenger.Age <= scope.to &&
+                        passenger.Pclass == classNum
+                    ) {
+                        count++;
+                    }
+                });
+            } else if (classNum && sex) {
+                this.passengersTotal.map((passenger) => {
+                    if (
+                        passenger.Age >= scope.from &&
+                        passenger.Age <= scope.to &&
+                        passenger.Pclass == classNum &&
+                        passenger.Sex == sex
+                    ) {
+                        count++;
+                    }
+                });
+            } else if (!classNum && sex) {
+                this.passengersTotal.map((passenger) => {
+                    if (
+                        passenger.Age >= scope.from &&
+                        passenger.Age <= scope.to &&
+                        passenger.Sex == sex
+                    ) {
+                        count++;
+                    }
+                });
+            }else if(!classNum && !sex){
+                this.passengersTotal.map((passenger) => {
+                    if (passenger.Age > scope.from && passenger.Age <= scope.to) {
+                        count++;
+                    }
+                });
+            }
+        }
+        // console.log(
+        //     isSurvived
+        //         ? `survived=${isSurvived} il y a ${count} passengers from ${scope.from} to ${scope.to}`
+        //         : `TOTAL il y a ${count} passengers from ${scope.from} to ${scope.to}`
+        // );
+        return count;
+    }
+
+    filterTotalClass(Pclass: number, isSurvived?: number | string, sex?: string): number {
+        let count = 0;
+        if (isSurvived) {
+           if(sex){
             this.passengersTotal.map((passenger) => {
                 if (
-                    passenger.Age >= scope.from &&
-                    passenger.Age <= scope.to &&
-                    passenger.Survived == isSurvived
+                    passenger.Pclass == Pclass &&
+                    passenger.Survived == isSurvived &&
+                    passenger.Sex == sex
                 ) {
                     count++;
                 }
             });
-        } else {
-            this.passengersTotal.map((passenger) => {
-                if (passenger.Age > scope.from && passenger.Age <= scope.to) {
-                    count++;
-                }
-            });
-        }
-        console.log(
-            isSurvived
-                ? `survived=${isSurvived} il y a ${count} passengers from ${scope.from} to ${scope.to}`
-                : `TOTAL il y a ${count} passengers from ${scope.from} to ${scope.to}`
-        );
-        return count;
-    }
-
-    filterTotalClass(Pclass: number, isSurvived?: number | string): number {
-        let count = 0;
-        if (isSurvived) {
+           }else{
             this.passengersTotal.map((passenger) => {
                 if (
                     passenger.Pclass == Pclass &&
@@ -152,52 +280,110 @@ export class PassengersComponent implements OnInit {
                     count++;
                 }
             });
+           }
+           
         } else {
+           if(sex){
+            this.passengersTotal.map((passenger) => {
+                if (passenger.Pclass == Pclass && passenger.Sex== sex) {
+                    count++;
+                }
+            });
+           }else{
             this.passengersTotal.map((passenger) => {
                 if (passenger.Pclass == Pclass) {
                     count++;
                 }
             });
+           }
         }
-        console.log(
-            isSurvived
-                ? `survived=${isSurvived} il y a ${count} passengers of class ${Pclass}`
-                : `TOTAL il y a il y a ${count} passengers of class ${Pclass}`
-        );
+        // console.log(
+        //     isSurvived
+        //         ? `survived=${isSurvived} il y a ${count} passengers of class ${Pclass}`
+        //         : `TOTAL il y a il y a ${count} passengers of class ${Pclass}`
+        // );
 
         return count;
     }
 
-    // totalDataSet() {
-    //     this.totalDataChart.totalOnBoard = this.filterTotal();
-    //     this.totalDataChart.totalNotSurvived = this.filterTotal('0');
-    //     this.totalDataChart.totalAgeTo20 = this.filterTotalAge({
-    //         from: 0,
-    //         to: 20,
-    //     });
-    //     this.totalDataChart.totalAgeFrom21To40 = this.filterTotalAge({
-    //         from: 21,
-    //         to: 40,
-    //     });
-    //     this.totalDataChart.totalAgeFrom41To60 = this.filterTotalAge({
-    //         from: 41,
-    //         to: 60,
-    //     });
-    //     this.totalDataChart.totalAgeFrom61To80 = this.filterTotalAge({
-    //         from: 61,
-    //         to: 80,
-    //     });
-    //     this.totalDataChart.totalAgeFrom81To100 = this.filterTotalAge({
-    //         from: 81,
-    //         to: 100,
-    //     });
-    //     this.totalDataChart.total1Class = this.filterTotalClass(1);
-    //     this.totalDataChart.total2Class = this.filterTotalClass(2);
-    //     this.totalDataChart.total3Class = this.filterTotalClass(3);
-    // }
-}
+    filterTotalSex(sex: string, isSurvived?: number | string): number {
+        let count = 0;
+        if (isSurvived) {
+            this.passengersTotal.map((passenger) => {
+                if (
+                    passenger.Sex == sex && 
+                    passenger.Survived == isSurvived
+                ) {
+                    count++;
+                }
+            });
+        } else {
+            this.passengersTotal.map((passenger) => {
+                if (passenger.Sex == sex) {
+                    count++;
+                }
+            });
+        }
+        // console.log(
+        //     isSurvived
+        //         ? `survived=${isSurvived} il y a ${count} passengers of class ${Pclass}`
+        //         : `TOTAL il y a il y a ${count} passengers of class ${Pclass}`
+        // );
 
-// totalAgeFrom61To80: number;
-//         total1Class: number;
-//         total2Class: number;
-//         total3Class: number;
+        return count;
+    }
+
+    filterCriteria($event: String[]) {
+        this.serchPassengers.emit($event);
+        this.crteriaFilter = $event;
+        console.log('🐈‍⬛🐈‍⬛🐈‍⬛***passengersComponent***',  this.crteriaFilter);
+        console.log('🐈‍⬛🐈‍⬛🐈‍⬛***passengersComponent***',  this.passengersTotal);
+        
+        
+        if ( this.crteriaFilter.includes('Pclass')) {
+           console.log('IN CLASS');
+           
+            this.isClassCriteria = true;
+            //data il faut 3 data: First class
+            this.classDataChart[0] = [
+                ...[this.filterTotalClass(1)], //total  1 class pass
+                ...[this.filterTotalClass(1, '0')], //total 1 class victims
+                ...[this.filterTotalAge({ from: 0, to: 20 }, undefined, 1)], //total scope age 1 class
+                ...[this.filterTotalAge({ from: 21, to: 40 }, undefined, 1)],
+                ...[this.filterTotalAge({ from: 41, to: 60 }, undefined, 1)],
+                ...[this.filterTotalAge({ from: 61, to: 80 }, undefined, 1)],
+                ...[this.filterTotalAge({ from: 81, to: 100 }, undefined, 1)],
+                ...[this.filterTotalClass(1, undefined, 'female')], //total 1 class female
+                ...[this.filterTotalClass(1, undefined, 'male')], //total 1 class female
+            ];
+            this.classDataChart[1] = [
+                ...[this.filterTotalClass(2)], //total  2 class pass
+                ...[this.filterTotalClass(2, '0')], //total 2 class victims
+                ...[this.filterTotalAge({ from: 0, to: 20 }, undefined, 2)], //total scope age 2 class
+                ...[this.filterTotalAge({ from: 21, to: 40 }, undefined, 2)],
+                ...[this.filterTotalAge({ from: 41, to: 60 }, undefined, 2)],
+                ...[this.filterTotalAge({ from: 61, to: 80 }, undefined, 2)],
+                ...[this.filterTotalAge({ from: 81, to: 100 }, undefined, 2)],
+                ...[this.filterTotalClass(2, undefined, 'female')], //total 2 class female
+                ...[this.filterTotalClass(2, undefined, 'male')], //total 2 class female
+            ];
+            this.classDataChart[2] = [
+                ...[this.filterTotalClass(3)], //total  3 class pass
+                ...[this.filterTotalClass(3, '0')], //total 3 class victims
+                ...[this.filterTotalAge({ from: 0, to: 20 }, undefined, 3)], //total scope age 3 class
+                ...[this.filterTotalAge({ from: 21, to: 40 }, undefined, 3)],
+                ...[this.filterTotalAge({ from: 41, to: 60 }, undefined, 3)],
+                ...[this.filterTotalAge({ from: 61, to: 80 }, undefined, 3)],
+                ...[this.filterTotalAge({ from: 81, to: 100 }, undefined, 3)],
+                ...[this.filterTotalClass(3, undefined, 'female')], //total 3 class female
+                ...[this.filterTotalClass(3, undefined, 'male')], //total 3 class female
+            ];
+        } else if ( this.crteriaFilter.includes('Age')) {
+            this.isAgeCriteria = true;
+        } else if ( this.crteriaFilter.includes('Sex')) {
+            this.isSexCriteria = true;
+        }
+        console.log('this.classDataChart', this.classDataChart);
+        
+    }
+}

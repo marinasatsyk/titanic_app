@@ -5,8 +5,10 @@ import {
     FormArray,
     FormControl,
     Validators,
+    NgForm,
 } from '@angular/forms';
 import { PassengersService } from '../passengers.service';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
     selector: 'searchComponent',
@@ -16,9 +18,8 @@ import { PassengersService } from '../passengers.service';
 export class SearchComponent {
     isModalOpen: boolean;
     _modalSubscription: any;
+    @Output() serchPassengers: EventEmitter<String[]> = new EventEmitter();
 
-    @Output() serchPokemon: EventEmitter<string> = new EventEmitter();
-    // @Input() testAPI: (searchCriteria: []) => void;
 
     selectFields: Array<any> = [
         { name: 'Sex', value: 'Sex' },
@@ -71,6 +72,7 @@ export class SearchComponent {
 
     ngOnInit() {
         this.isModalOpen = this.passengersService.isModalOpenService;
+        // this.passengersService.criteriaFilterChange
         this.CriteriaFilterSearch = this.passengersService.criteriaFilterChange;
     }
 
@@ -78,16 +80,24 @@ export class SearchComponent {
         this.passengersService.onToggleCreateForm();
         console.log('click modal from FORM close', this.isModalOpen);
     }
+    search:string = "";
     submitForm() {
         // console.log(this.form.value);
         let selectCriteria = this.form.value.checkArrayTypes;
-        console.log(selectCriteria);
-        this.passengersService.filterPassegerByCriteria(selectCriteria);
-        console.log("criteriaFilterChange from Serach component", this.CriteriaFilterSearch);
+        // console.log(selectCriteria);
+        // this.passengersService.filterPassegerByCriteria(selectCriteria).subscribe((value) => {
+        //     console.log("", value);
+            
+        // });
+        console.log("criteriaFilterChange from Serach component", selectCriteria);
+        if(selectCriteria.length > 0){
+           console.log("🦊event from search");
+            this.serchPassengers.emit(selectCriteria);
+        }
     }
 
     clearFilters(){
-        this.passengersService.filterPassegerByCriteria([]);
-        console.log("CriteriaFilterSearch from clear", this.CriteriaFilterSearch);
+        // this.passengersService.filterPassegerByCriteria([]);
+        // console.log("CriteriaFilterSearch from clear", this.CriteriaFilterSearch);
     }
 }
