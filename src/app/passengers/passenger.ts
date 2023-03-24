@@ -4,7 +4,7 @@ export interface Passenger {
     Survived: number,
     Pclass: number,
     Sex: string,
-    Age: number,
+    Age: number | string,
     SibSp: number,
     Parch: number,
     Ticket: number | string,

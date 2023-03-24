@@ -33,19 +33,15 @@ export class PassengersComponent implements OnInit {
         'Total from 21 to 40 years old',
         'Total from 41 to 60 years old',
         'Total from 61 to 80 years old',
-        'Total from 81 to 100 years old',
+        'Total age undefined',
         'Total 1 Class',
         'Total 2 Class',
         'Total 3 Class',
         'Total Women',
-        'Total Men'
+        'Total Men',
     ];
 
-    totalLabels: string[] = [
-        'Total',
-        'Victims',
-        'Survived'
-    ];
+    totalLabels: string[] = ['Total', 'Victims', 'Survived'];
     classGlobalLables: string[] = [
         'Total on board',
         'Total victims',
@@ -57,18 +53,14 @@ export class PassengersComponent implements OnInit {
         'Total F',
         'Total H',
     ];
-    
-    classLables: string[] = [
-        '1 Class',
-        '2 Class',
-        '3 Class',
-    ]
+
+    classLables: string[] = ['1 Class', '2 Class', '3 Class'];
 
     statiticsTitles = {
         total: 'Total Statistics',
         age: 'Age Statistics',
         sex: 'Sex Statistics',
-        classS: 'Class Statistics'
+        classS: 'Class Statistics',
     };
 
     constructor(private passengerService: PassengersService) {
@@ -89,6 +81,7 @@ export class PassengersComponent implements OnInit {
             .getPassengers()
             .subscribe((passengerslist: any) => {
                 this.passengersTotal = passengerslist.passengers;
+                console.log('TOTAL total start');
 
                 this.totalDataChart[0] = [
                     ...[this.filterTotal()],
@@ -96,20 +89,38 @@ export class PassengersComponent implements OnInit {
                     ...[this.filterTotalAge({ from: 21, to: 40 })],
                     ...[this.filterTotalAge({ from: 41, to: 60 })],
                     ...[this.filterTotalAge({ from: 61, to: 80 })],
-                    ...[this.filterTotalAge({ from: 81, to: 100 })],
+                    ...[
+                        this.filterTotalAge(
+                            undefined,
+                            undefined,
+                            undefined,
+                            undefined,
+                            ''
+                        ),
+                    ],
                     ...[this.filterTotalClass(1)],
                     ...[this.filterTotalClass(2)],
                     ...[this.filterTotalClass(3)],
                     ...[this.filterTotalSex('female')],
                     ...[this.filterTotalSex('male')],
                 ];
+                console.log('TOTAL total end');
+
                 this.totalDataChart[1] = [
                     ...[this.filterTotal('0')],
                     ...[this.filterTotalAge({ from: 0, to: 20 }, '0')],
                     ...[this.filterTotalAge({ from: 21, to: 40 }, '0')],
                     ...[this.filterTotalAge({ from: 41, to: 60 }, '0')],
                     ...[this.filterTotalAge({ from: 61, to: 80 }, '0')],
-                    ...[this.filterTotalAge({ from: 81, to: 100 }, '0')],
+                    ...[
+                        this.filterTotalAge(
+                            undefined,
+                            '0',
+                            undefined,
+                            undefined,
+                            ''
+                        ),
+                    ],
                     ...[this.filterTotalClass(1, '0')],
                     ...[this.filterTotalClass(2, '0')],
                     ...[this.filterTotalClass(3, '0')],
@@ -122,18 +133,28 @@ export class PassengersComponent implements OnInit {
                     ...[this.filterTotalAge({ from: 21, to: 40 }, 1)],
                     ...[this.filterTotalAge({ from: 41, to: 60 }, 1)],
                     ...[this.filterTotalAge({ from: 61, to: 80 }, 1)],
-                    ...[this.filterTotalAge({ from: 81, to: 100 }, 1)],
+                    ...[
+                        this.filterTotalAge(
+                            undefined,
+                            1,
+                            undefined,
+                            undefined,
+                            ''
+                        ),
+                    ],
                     ...[this.filterTotalClass(1, 1)],
                     ...[this.filterTotalClass(2, 1)],
                     ...[this.filterTotalClass(3, 1)],
                     ...[this.filterTotalSex('female', 1)],
                     ...[this.filterTotalSex('male', 1)],
-
                 ];
                 console.log('🔎', this.totalDataChart);
             });
 
-         console.log('✅✅✅✅✅✅***passengersComponent***', this.crteriaFilter);
+        console.log(
+            '✅✅✅✅✅✅***passengersComponent***',
+            this.crteriaFilter
+        );
     }
 
     filterTotal(isSurvived?: number | string) {
@@ -156,146 +177,223 @@ export class PassengersComponent implements OnInit {
     }
 
     filterTotalAge(
-        scope: { from: number; to: number },
+        scope: { from: number; to: number } | undefined,
         isSurvived?: number | string,
         classNum?: number,
+        sex?: string,
+        ageUndef?: string | undefined
+    ): number {
+        let count = 0;
+
+        if (isSurvived != undefined) {
+            console.log('dans la boucle survived DEFINI =' + isSurvived);
+            //TOTAL AVEC AGE DEFINI SURVECU/PAS SURVECU
+            if (scope && !classNum && !sex && ageUndef != '') {
+                console.log('survived DEF sans class, sans sex ');
+
+                this.passengersTotal.map((passenger) => {
+                    if (
+                        passenger.Age != null &&
+                        +passenger.Age >= scope.from &&
+                        +passenger.Age <= scope.to &&
+                        passenger.Survived == isSurvived
+                    ) {
+                        console.log(
+                            'AGE is' + passenger.Age,
+                            'scope from' + scope.from,
+                            'scope to' + scope.to
+                        );
+                        count++;
+                    }
+                });
+                console.log('passengers  num', scope.from, scope.to, count);
+            } else if (scope && classNum && !sex && ageUndef != '') {
+                console.log('survived avec class, sans sex ' + scope);
+                this.passengersTotal.map((passenger) => {
+                    if (
+                        passenger.Age != null &&
+                        +passenger.Age >= scope.from &&
+                        +passenger.Age <= scope.to &&
+                        passenger.Survived == isSurvived &&
+                        passenger.Pclass == classNum
+                    ) {
+                        count++;
+                    }
+                });
+            } else if (
+                scope != undefined &&
+                classNum &&
+                sex &&
+                ageUndef != ''
+            ) {
+                console.log('survived avec class, avec sex ' + scope);
+
+                this.passengersTotal.map((passenger) => {
+                    if (
+                        passenger.Age != null &&
+                        +passenger.Age >= scope.from &&
+                        +passenger.Age <= scope.to &&
+                        passenger.Survived == isSurvived &&
+                        passenger.Pclass == classNum &&
+                        passenger.Sex == sex
+                    ) {
+                        count++;
+                    }
+                });
+            } else if (
+                scope != undefined &&
+                !classNum &&
+                sex &&
+                ageUndef != ''
+            ) {
+                this.passengersTotal.map((passenger) => {
+                    if (
+                        passenger.Age != null &&
+                        +passenger.Age >= scope.from &&
+                        +passenger.Age <= scope.to &&
+                        passenger.Survived == isSurvived &&
+                        passenger.Sex == sex
+                    ) {
+                        count++;
+                    }
+                });
+            } else if (!scope && ageUndef == '') {
+                this.passengersTotal.map((passenger) => {
+                    if (
+                        (passenger.Age == ageUndef ||
+                            !passenger.Age ||
+                            passenger.Age == null) &&
+                        passenger.Survived == isSurvived
+                    ) {
+                        console.log(
+                            '✔️✔️✔️********************** survivedDEF age UNDEF ',
+                            passenger.Age
+                        );
+                        count++;
+                    }
+                });
+            }
+        } else {
+            console.log('dans le boucle  TOTAL UNDEFINI');
+
+            if (scope && classNum && !sex && ageUndef != '') {
+                this.passengersTotal.map((passenger) => {
+                    if (
+                        passenger.Age != null &&
+                        +passenger.Age >= scope.from &&
+                        +passenger.Age <= scope.to &&
+                        passenger.Pclass == classNum
+                    ) {
+                        count++;
+                    }
+                });
+            } else if (scope && classNum && sex && ageUndef != '') {
+                this.passengersTotal.map((passenger) => {
+                    if (
+                        passenger.Age != null &&
+                        +passenger.Age >= scope.from &&
+                        +passenger.Age <= scope.to &&
+                        passenger.Pclass == classNum &&
+                        passenger.Sex == sex
+                    ) {
+                        count++;
+                    }
+                });
+            } else if (scope && !classNum && sex && ageUndef != '') {
+                this.passengersTotal.map((passenger) => {
+                    if (
+                        passenger.Age != null &&
+                        +passenger.Age >= scope.from &&
+                        +passenger.Age <= scope.to &&
+                        passenger.Sex == sex
+                    ) {
+                        count++;
+                    }
+                });
+            } else if (scope && !classNum && !sex && ageUndef != '') {
+               console.log("❤️COUNT TOTAL AGE❤️");
+               
+                this.passengersTotal.map((passenger) => {
+                    if (
+                        passenger.Age != null &&
+                        passenger.Age >= scope.from &&
+                        passenger.Age <= scope.to
+                    ) {
+                        console.log(
+                            'survUNDEF, age DEF:',
+                            'AGE is' + passenger.Age,
+                            'scope from' + scope.from,
+                            'scope to' + scope.to
+                        );
+                        count++;
+                    }
+                });
+                console.log(count);
+            } else if (!scope && ageUndef == '') {
+                console.log(
+                    '✅✅✅✅✅✅************** survUndef ageUndef '
+                );
+                this.passengersTotal.map((passenger) => {
+                    if (
+                        passenger.Age == ageUndef ||
+                        passenger.Age == null ||
+                        !passenger.Age
+                    ) {
+                        console.log(
+                            'survUNDEF, age UNDEF',
+                            'AGE is' + passenger.Age
+                        );
+                        count++;
+                    }
+                });
+
+                console.log(count);
+            }
+        }
+        return count;
+    }
+
+    filterTotalClass(
+        Pclass: number,
+        isSurvived?: number | string,
         sex?: string
     ): number {
         let count = 0;
         if (isSurvived) {
-            if (!classNum && !sex) {
+            if (sex) {
                 this.passengersTotal.map((passenger) => {
                     if (
-                        passenger.Age >= scope.from &&
-                        passenger.Age <= scope.to &&
+                        passenger.Pclass == Pclass &&
+                        passenger.Survived == isSurvived &&
+                        passenger.Sex == sex
+                    ) {
+                        count++;
+                    }
+                });
+            } else {
+                this.passengersTotal.map((passenger) => {
+                    if (
+                        passenger.Pclass == Pclass &&
                         passenger.Survived == isSurvived
                     ) {
                         count++;
                     }
                 });
-                console.log('passengers num', count);
-                
-            } else if (classNum && !sex) {
+            }
+        } else {
+            if (sex) {
                 this.passengersTotal.map((passenger) => {
-                    if (
-                        passenger.Age >= scope.from &&
-                        passenger.Age <= scope.to &&
-                        passenger.Survived == isSurvived &&
-                        passenger.Pclass == classNum
-                    ) {
+                    if (passenger.Pclass == Pclass && passenger.Sex == sex) {
                         count++;
                     }
                 });
-            } else if (classNum && sex) {
+            } else {
                 this.passengersTotal.map((passenger) => {
-                    if (
-                        passenger.Age >= scope.from &&
-                        passenger.Age <= scope.to &&
-                        passenger.Survived == isSurvived &&
-                        passenger.Pclass == classNum &&
-                        passenger.Sex == sex
-                    ) {
-                        count++;
-                    }
-                });
-            } else if (!classNum && sex) {
-                this.passengersTotal.map((passenger) => {
-                    if (
-                        passenger.Age >= scope.from &&
-                        passenger.Age <= scope.to &&
-                        passenger.Survived == isSurvived &&
-                        passenger.Sex == sex
-                    ) {
+                    if (passenger.Pclass == Pclass) {
                         count++;
                     }
                 });
             }
-        } else {
-             if (classNum && !sex) {
-                this.passengersTotal.map((passenger) => {
-                    if (
-                        passenger.Age >= scope.from &&
-                        passenger.Age <= scope.to &&
-                        passenger.Pclass == classNum
-                    ) {
-                        count++;
-                    }
-                });
-            } else if (classNum && sex) {
-                this.passengersTotal.map((passenger) => {
-                    if (
-                        passenger.Age >= scope.from &&
-                        passenger.Age <= scope.to &&
-                        passenger.Pclass == classNum &&
-                        passenger.Sex == sex
-                    ) {
-                        count++;
-                    }
-                });
-            } else if (!classNum && sex) {
-                this.passengersTotal.map((passenger) => {
-                    if (
-                        passenger.Age >= scope.from &&
-                        passenger.Age <= scope.to &&
-                        passenger.Sex == sex
-                    ) {
-                        count++;
-                    }
-                });
-            }else if(!classNum && !sex){
-                this.passengersTotal.map((passenger) => {
-                    if (passenger.Age > scope.from && passenger.Age <= scope.to) {
-                        count++;
-                    }
-                });
-            }
-        }
-        // console.log(
-        //     isSurvived
-        //         ? `survived=${isSurvived} il y a ${count} passengers from ${scope.from} to ${scope.to}`
-        //         : `TOTAL il y a ${count} passengers from ${scope.from} to ${scope.to}`
-        // );
-        return count;
-    }
-
-    filterTotalClass(Pclass: number, isSurvived?: number | string, sex?: string): number {
-        let count = 0;
-        if (isSurvived) {
-           if(sex){
-            this.passengersTotal.map((passenger) => {
-                if (
-                    passenger.Pclass == Pclass &&
-                    passenger.Survived == isSurvived &&
-                    passenger.Sex == sex
-                ) {
-                    count++;
-                }
-            });
-           }else{
-            this.passengersTotal.map((passenger) => {
-                if (
-                    passenger.Pclass == Pclass &&
-                    passenger.Survived == isSurvived
-                ) {
-                    count++;
-                }
-            });
-           }
-           
-        } else {
-           if(sex){
-            this.passengersTotal.map((passenger) => {
-                if (passenger.Pclass == Pclass && passenger.Sex== sex) {
-                    count++;
-                }
-            });
-           }else{
-            this.passengersTotal.map((passenger) => {
-                if (passenger.Pclass == Pclass) {
-                    count++;
-                }
-            });
-           }
         }
         // console.log(
         //     isSurvived
@@ -310,10 +408,7 @@ export class PassengersComponent implements OnInit {
         let count = 0;
         if (isSurvived) {
             this.passengersTotal.map((passenger) => {
-                if (
-                    passenger.Sex == sex && 
-                    passenger.Survived == isSurvived
-                ) {
+                if (passenger.Sex == sex && passenger.Survived == isSurvived) {
                     count++;
                 }
             });
@@ -336,13 +431,12 @@ export class PassengersComponent implements OnInit {
     filterCriteria($event: String[]) {
         this.serchPassengers.emit($event);
         this.crteriaFilter = $event;
-        console.log('🐈‍⬛🐈‍⬛🐈‍⬛***passengersComponent***',  this.crteriaFilter);
-        console.log('🐈‍⬛🐈‍⬛🐈‍⬛***passengersComponent***',  this.passengersTotal);
-        
-        
-        if ( this.crteriaFilter.includes('Pclass')) {
-           console.log('IN CLASS');
-           
+        console.log('🐈‍⬛🐈‍⬛🐈‍⬛***passengersComponent***', this.crteriaFilter);
+        console.log('🐈‍⬛🐈‍⬛🐈‍⬛***passengersComponent***', this.passengersTotal);
+
+        if (this.crteriaFilter.includes('Pclass')) {
+            console.log('IN CLASS');
+
             this.isClassCriteria = true;
             //data il faut 3 data: First class
             this.classDataChart[0] = [
@@ -378,12 +472,11 @@ export class PassengersComponent implements OnInit {
                 ...[this.filterTotalClass(3, undefined, 'female')], //total 3 class female
                 ...[this.filterTotalClass(3, undefined, 'male')], //total 3 class female
             ];
-        } else if ( this.crteriaFilter.includes('Age')) {
+        } else if (this.crteriaFilter.includes('Age')) {
             this.isAgeCriteria = true;
-        } else if ( this.crteriaFilter.includes('Sex')) {
+        } else if (this.crteriaFilter.includes('Sex')) {
             this.isSexCriteria = true;
         }
         console.log('this.classDataChart', this.classDataChart);
-        
     }
 }
