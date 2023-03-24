@@ -1,7 +1,22 @@
 header {
     background: rgb(218, 214, 214);
+   
+    .header-wrap{
+        display: flex;
+        justify-content:space-between;
+        align-items: center;
+       
+    }
     img{
-        width: 150px;
-        
+        width: 200px;
+        // position: absolute;
+        // top:30px;
+        // left: 30px;
+    }
+
+   
+
+    #navbarSupportedContent{
+        flex-grow: unset !important;
     }
 }

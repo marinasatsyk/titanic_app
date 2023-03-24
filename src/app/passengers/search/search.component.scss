@@ -1,0 +1,36 @@
+.form-wrap{
+    position: relative;
+    background: rgba(255, 255, 255, 0.24);
+    border-radius: 10px;
+    padding: 10px;
+    .wrap-checkbox{
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: left !important;
+        justify-content: left !important;
+    }
+}
+
+.clear {
+    position: absolute;
+    top: -16px;
+    right: -8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 25px;
+    border-radius: 50%;
+    background: #dc35458f;
+    font-weight: bold;
+    &:hover {
+        background: rgb(220 53 69 / 92%);
+    }
+}
+
+.btn{
+    background: #35dc358f;
+    border: none;
+    &:hover{
+        background: #35dc35ea;
+    }
+}

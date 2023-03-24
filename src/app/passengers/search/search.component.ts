@@ -82,7 +82,6 @@ export class SearchComponent {
     }
     search:string = "";
     submitForm() {
-        // console.log(this.form.value);
         let selectCriteria = this.form.value.checkArrayTypes;
         // console.log(selectCriteria);
         // this.passengersService.filterPassegerByCriteria(selectCriteria).subscribe((value) => {
