@@ -96,6 +96,7 @@ export class SearchComponent {
     }
 
     clearFilters(){
+        this.serchPassengers.emit([]);
         // this.passengersService.filterPassegerByCriteria([]);
         // console.log("CriteriaFilterSearch from clear", this.CriteriaFilterSearch);
     }

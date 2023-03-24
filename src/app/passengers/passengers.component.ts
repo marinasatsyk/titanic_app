@@ -476,7 +476,10 @@ export class PassengersComponent implements OnInit {
             this.isAgeCriteria = true;
         } else if (this.crteriaFilter.includes('Sex')) {
             this.isSexCriteria = true;
+        }else if(!this.crteriaFilter.length){
+            this.isClassCriteria = false;
+            this.isAgeCriteria = false;
+            this.isSexCriteria = false;
         }
-        console.log('this.classDataChart', this.classDataChart);
     }
 }
